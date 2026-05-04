@@ -1,0 +1,138 @@
+Open terminal and type:
+nano tac.c
+
+CTRL + O → Enter → CTRL + X
+🔹 STEP 4: Compile the program
+gcc tac.c -o tac
+🔹 STEP 5: Run the program
+./tac
+
+in c language==>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char input[100];
+int i = 0;
+int temp = 1;
+
+void newTemp(char *t) {
+    sprintf(t, "t%d", temp++);
+}
+
+void generate() {
+    char op1[10], op2[10], res[10];
+
+    while (input[i] != '\0') {
+        if (input[i] == '*' || input[i] == '/') {
+            char operator = input[i];
+
+            op1[0] = input[i - 1];
+            op1[1] = '\0';
+
+            op2[0] = input[i + 1];
+            op2[1] = '\0';
+
+            newTemp(res);
+
+            printf("%s = %s %c %s\n", res, op1, operator, op2);
+
+            input[i - 1] = res[0];
+            input[i] = ' ';
+            input[i + 1] = ' ';
+        }
+        i++;
+    }
+
+    i = 0;
+
+    while (input[i] != '\0') {
+        if (input[i] == '+' || input[i] == '-') {
+            char operator = input[i];
+
+            op1[0] = input[i - 1];
+            op1[1] = '\0';
+
+            op2[0] = input[i + 1];
+            op2[1] = '\0';
+
+            newTemp(res);
+
+            printf("%s = %s %c %s\n", res, op1, operator, op2);
+
+            input[i - 1] = res[0];
+            input[i] = ' ';
+            input[i + 1] = ' ';
+        }
+        i++;
+    }
+}
+
+int main() {
+    printf("Enter expression: ");
+    scanf("%s", input);
+
+    generate();
+
+    return 0;
+}
+
+
+
+
+
+for python
+nano tac.py
+paste code 
+CTRL + O → Enter → CTRL + X
+🔹 STEP 5: Run program
+python3 tac.py
+🔹 STEP 6: Give input
+a+b*c-d
+
+python3 --version
+
+If not installed:
+
+sudo apt install python3
+
+
+code==>
+
+temp_count = 1
+
+def new_temp():
+    global temp_count
+    t = f"t{temp_count}"
+    temp_count += 1
+    return t
+
+def generate_tac(expr):
+    expr = list(expr)
+
+    # Handle * and /
+    i = 0
+    while i < len(expr):
+        if expr[i] in ['*', '/']:
+            op = expr[i]
+            t = new_temp()
+            print(f"{t} = {expr[i-1]} {op} {expr[i+1]}")
+            expr[i-1:i+2] = [t]
+            i = 0
+        else:
+            i += 1
+
+    # Handle + and -
+    i = 0
+    while i < len(expr):
+        if expr[i] in ['+', '-']:
+            op = expr[i]
+            t = new_temp()
+            print(f"{t} = {expr[i-1]} {op} {expr[i+1]}")
+            expr[i-1:i+2] = [t]
+            i = 0
+        else:
+            i += 1
+
+expr = input("Enter expression: ")
+generate_tac(expr)

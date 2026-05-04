@@ -1,0 +1,111 @@
+🚀 STEP-BY-STEP (YOUR CODE)
+
+You are already in:
+
+/mnt/d/VC CODE/VS CODE PROJECTS
+🔹 STEP 1: Make sure file exists
+
+Run:
+
+ls
+
+👉 You should see:
+
+ass5p.py
+🔹 STEP 2: Run the program
+
+👉 Use this exact command:
+
+python3 ass5p.py
+🔹 STEP 3: Give input
+
+Example:
+
+Enter number of TAC lines: 4
+Enter TAC:
+t1 = a + 0
+t2 = b * 1
+t3 = c * 0
+t4 = 2 + 3
+🔹 STEP 4: Output you should get
+--- OPTIMIZED CODE ---
+t1 = a
+t2 = b
+t3 = 0
+t4 = 5
+⚠️ VERY IMPORTANT (EXAM)
+
+👉 Input format MUST be exactly like:
+
+t1 = a + 0   ✅
+
+python3 ass5p.py   ✅
+🧠 QUICK MEMORY TRICK
+python3 filename.py
+Run:
+
+python3 --version
+
+
+
+code -->
+def optimize(code):
+    optimized = []
+
+    for line in code:
+        parts = line.split()
+
+        # Format: t1 = a + 0
+        if len(parts) == 5:
+            lhs = parts[0]
+            op1 = parts[2]
+            operator = parts[3]
+            op2 = parts[4]
+
+            # 🔹 Constant Folding
+            if op1.isdigit() and op2.isdigit():
+                result = eval(op1 + operator + op2)
+                optimized.append(f"{lhs} = {result}")
+
+            # 🔹 Algebraic Simplification
+            elif operator == '+' and op2 == '0':
+                optimized.append(f"{lhs} = {op1}")
+
+            elif operator == '+' and op1 == '0':
+                optimized.append(f"{lhs} = {op2}")
+
+            elif operator == '*' and op2 == '1':
+                optimized.append(f"{lhs} = {op1}")
+
+            elif operator == '*' and op1 == '1':
+                optimized.append(f"{lhs} = {op2}")
+
+            elif operator == '*' and (op1 == '0' or op2 == '0'):
+                optimized.append(f"{lhs} = 0")
+
+            else:
+                optimized.append(line)
+
+        else:
+            optimized.append(line)
+
+    return optimized
+
+
+# -------------------------------
+# MAIN
+# -------------------------------
+n = int(input("Enter number of TAC lines: "))
+code = []
+
+print("Enter TAC:")
+for _ in range(n):
+    code.append(input())
+
+print("\n--- OPTIMIZED CODE ---")
+result = optimize(code)
+
+for line in result:
+    print(line)
+
+

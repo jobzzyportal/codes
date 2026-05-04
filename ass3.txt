@@ -1,0 +1,251 @@
+english.l
+
+%{
+#include <stdio.h>
+%}
+
+%%
+
+"he"|"she"|"they"|"it"|"we"|"you"|"I"          { printf("Pronoun     : %s\n", yytext); }
+
+"run"|"eat"|"play"|"is"|"are"|"was"|"go"|"come"|"write"|"read"|"sleep"|"work"|"help"|"stop"|"love"|"like"|"need"|"make"|"do"|"have"|"say"|"get"|"see"|"know"   { printf("Verb        : %s\n", yytext); }
+
+"quick"|"happy"|"sad"|"big"|"small"|"good"|"bad"|"hot"|"cold"|"fast"|"slow"|"new"|"old"|"young"|"smart"|"beautiful"|"tall"|"short"|"long"|"high"|"low"|"dark"|"bright"   { printf("Adjective   : %s\n", yytext); }
+
+"quickly"|"slowly"|"very"|"really"|"always"|"never"|"often"|"already"|"soon"|"just"|"hard"|"fast"|"well"|"badly"|"easily"|"carefully"|"finally"|"maybe"|"perhaps"   { printf("Adverb      : %s\n", yytext); }
+
+"on"|"in"|"under"|"over"|"at"|"by"|"with"|"from"|"to"|"of"|"into"|"above"|"below"|"near"|"between"|"through"|"before"|"after"|"behind"|"around"   { printf("Preposition : %s\n", yytext); }
+
+"and"|"but"|"or"|"nor"|"so"|"yet"|"for"|"because"|"although"|"if"|"while"|"when"|"though"|"unless"|"however"|"therefore"   { printf("Conjunction : %s\n", yytext); }
+
+"a"|"an"|"the"   { printf("Article     : %s\n", yytext); }
+
+[a-zA-Z]+        { printf("Noun        : %s\n", yytext); }
+
+[0-9]+           { printf("Number      : %s\n", yytext); }
+
+[ \t\n]+         ;
+
+.                { printf("Unknown     : %s\n", yytext); }
+
+%%
+
+int main() {
+    printf("==========================================\n");
+    printf("  ENGLISH PARTS OF SPEECH ANALYZER\n");
+    printf("==========================================\n");
+    printf("Enter sentence (Ctrl+D to end):\n");
+    printf("------------------------------------------\n");
+    yylex();
+    return 0;
+}
+
+int yywrap() { return 1; }
+
+
+
+
+c_symbol_table.l
+
+%{
+#include <stdio.h>
+#include <string.h>
+
+/* ---- SYMBOL TABLE ---- */
+char  symtab[200][50];
+char  symtype[200][20];
+int   count = 0;
+
+int search(char *str) {
+    for (int i = 0; i < count; i++)
+        if (strcmp(symtab[i], str) == 0)
+            return i;
+    return -1;
+}
+
+void insert(char *str, char *type) {
+    if (search(str) == -1) {
+        strcpy(symtab[count], str);
+        strcpy(symtype[count], type);
+        count++;
+    }
+}
+
+void print_symtable() {
+    printf("\n==========================================\n");
+    printf("            SYMBOL TABLE\n");
+    printf("==========================================\n");
+    printf("%-5s %-20s %-15s\n", "S.No", "Token", "Type");
+    printf("------------------------------------------\n");
+    for (int i = 0; i < count; i++)
+        printf("%-5d %-20s %-15s\n", i+1, symtab[i], symtype[i]);
+    printf("==========================================\n");
+    printf("Total entries: %d\n", count);
+}
+%}
+
+%%
+
+"int"|"float"|"char"|"double"|"long"|"short"|"void"|"return"|"if"|"else"|"while"|"for"|"do"|"switch"|"case"|"break"|"continue"|"struct"|"typedef"|"const"|"static"|"unsigned"|"signed"|"sizeof"   {
+    insert(yytext, "KEYWORD");
+    printf("Keyword     : %s\n", yytext);
+}
+
+"=="|"!="|"<="|">="|"&&"|"||"|"++"|"--"|"+="|"-="|"*="|"/="|"->"   {
+    printf("Operator    : %s\n", yytext);
+}
+"+"|"-"|"*"|"/"|"%"|"="|"<"|">"|"!"|"&"|"|"   {
+    printf("Operator    : %s\n", yytext);
+}
+
+[0-9]+\.[0-9]+   {
+    insert(yytext, "FLOAT CONST");
+    printf("Float Const : %s\n", yytext);
+}
+[0-9]+           {
+    insert(yytext, "INT CONST");
+    printf("Int Const   : %s\n", yytext);
+}
+
+\"[^\"]*\"       {
+    insert(yytext, "STRING");
+    printf("String      : %s\n", yytext);
+}
+\'[^\']\'        {
+    insert(yytext, "CHAR CONST");
+    printf("Char Const  : %s\n", yytext);
+}
+
+[a-zA-Z_][a-zA-Z0-9_]*   {
+    insert(yytext, "IDENTIFIER");
+    printf("Identifier  : %s\n", yytext);
+}
+
+";"|","|"("|")"|"{"|"}"|"["|"]"   {
+    printf("Symbol      : %s\n", yytext);
+}
+
+[ \t\n]+   ;
+
+.    { printf("Unknown     : %s\n", yytext); }
+
+%%
+
+int main() {
+    printf("==========================================\n");
+    printf("    C LANGUAGE LEXICAL ANALYZER\n");
+    printf("       (WITH SYMBOL TABLE)\n");
+    printf("==========================================\n");
+    printf("Enter C code (Ctrl+D to end):\n");
+    printf("------------------------------------------\n");
+    yylex();
+    print_symtable();
+    return 0;
+}
+
+int yywrap() { return 1; }
+
+
+c_lexer.l
+
+
+%{
+#include <stdio.h>
+%}
+
+%%
+
+"int"|"float"|"char"|"double"|"long"|"short"|"void"|"return"|"if"|"else"|"while"|"for"|"do"|"switch"|"case"|"break"|"continue"|"struct"|"typedef"|"const"|"static"|"unsigned"|"signed"|"sizeof"   { printf("Keyword     : %s\n", yytext); }
+
+"#include"|"#define"|"#ifdef"|"#ifndef"|"#endif"|"#pragma"   { printf("Preprocessor: %s\n", yytext); }
+
+"=="|"!="|"<="|">="|"&&"|"||"|"++"|"--"|"+="|"-="|"*="|"/="|"->"   { printf("Operator    : %s\n", yytext); }
+"+"|"-"|"*"|"/"|"%"|"="|"<"|">"|"!"|"&"|"|"|"^"|"~"                { printf("Operator    : %s\n", yytext); }
+
+[0-9]+\.[0-9]+   { printf("Float Const : %s\n", yytext); }
+[0-9]+           { printf("Int Const   : %s\n", yytext); }
+
+\"[^\"]*\"       { printf("String      : %s\n", yytext); }
+\'[^\']\'        { printf("Char Const  : %s\n", yytext); }
+
+[a-zA-Z_][a-zA-Z0-9_]*   { printf("Identifier  : %s\n", yytext); }
+
+";"|","|"("|")"|"{"|"}"|"["|"]"   { printf("Symbol      : %s\n", yytext); }
+
+[ \t\n]+   ;
+
+.          { printf("Unknown     : %s\n", yytext); }
+
+%%
+
+int main() {
+    printf("==========================================\n");
+    printf("    C LANGUAGE LEXICAL ANALYZER\n");
+    printf("      (WITHOUT SYMBOL TABLE)\n");
+    printf("==========================================\n");
+    printf("Enter C code (Ctrl+D to end):\n");
+    printf("------------------------------------------\n");
+    yylex();
+    return 0;
+}
+
+int yywrap() { return 1; }
+
+
+
+how to run 
+
+flex english.l
+gcc lex.yy.c -o output
+./output
+
+Same steps for c_lexer.l and c_symbol_table.l.
+
+STEP-BY-STEP EXECUTION
+🔹 STEP 1: Go to your folder
+
+Type this exactly 👇
+
+cd /mnt/d/VC\ CODE/VS\ CODE\ PROJECTS/ass3
+🔹 STEP 2: Check files
+ls
+
+👉 You should see:
+
+english.l
+c_lexer.l
+c_symbol_table.l
+🔹 STEP 3: Install flex & gcc (only once)
+sudo apt update
+sudo apt install flex gcc
+
+👉 If already installed → it will say already newest version
+
+🔹 STEP 4: Run C LEXICAL ANALYZER
+👉 For c_lexer.l
+flex c_lexer.l
+gcc lex.yy.c -o lexer
+./lexer
+🔹 STEP 5: Give input
+
+Type:
+
+int a = 10;
+
+Press Enter + Ctrl + D (to stop input)
+
+🔹 STEP 6: Run Symbol Table version
+flex c_symbol_table.l
+gcc lex.yy.c -o sym
+./sym
+🔹 STEP 7: Run English analyzer
+flex english.l
+gcc lex.yy.c -o eng
+./eng
+⚠️ IMPORTANT (VERY COMMON MISTAKE)
+
+After input, press:
+
+CTRL + D
+
+👉 Otherwise program will keep waiting
